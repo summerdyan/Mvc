@@ -1,6 +1,6 @@
 ﻿// controller class that handles browser requests, retrieves model data, and calls
 // view templates that return a response
-// this controller class specifies a default action and a welcome action
+// this controller class specifies a default action and calls View method
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,21 +14,21 @@ namespace MvcMovie.Controllers
 {
     public class HelloWorldController : Controller
     {
-        //
-        // GET: /HelloWorld/
-        // this is an HTTP GET method that's invoked by appending /HelloWorld/ to the base URL
-        public string Index()
+        // calls controller's View methods
+        public IActionResult Index()
         {
-            return "This is my default action...";
+            return View();
         }
 
-        //
-        // GET: /HelloWorld/Welcome/
-        // this is an HTTP GET method that's invoked by appending /HelloWorld/Welcome/ to the URL
-        // displays name and ID
-        public string Welcome(string name, int ID = 1)
+        // Receives name and numTimes from query string
+        // Displays message and calls controller's View methods
+        public IActionResult Welcome(string name, int numTimes = 1)
         {
-            return HtmlEncoder.Default.Encode($"Hello {name}, ID is: {ID}");
+            // ViewData contains data that will be passed to View
+            ViewData["Message"] = "Hello " + name;
+            ViewData["NumTimes"] = numTimes;
+
+            return View();
         }
     }
 }
