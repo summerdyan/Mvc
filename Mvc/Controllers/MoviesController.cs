@@ -180,7 +180,8 @@ namespace Mvc.Controllers
         }
 
         // POST: Movies/Delete/5
-        [HttpPost, ActionName("Delete")]
+        // deletes the movie that was displayed by the Delete method
+        [HttpPost, ActionName("Delete")] // having the ActionName allows this method and Delete to be connected
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
