@@ -78,6 +78,7 @@ namespace Mvc.Controllers
         }
 
         // GET: Movies/Create
+        // displays the initial Create form
         public IActionResult Create()
         {
             return View();
@@ -86,7 +87,10 @@ namespace Mvc.Controllers
         // POST: Movies/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        // checks whether the movie has validation errors
+        // if errors are present, form is redisplayed
+        // if no errors, then the movie is added to the movie list
+        [HttpPost] // handles the Create form post
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,ReleaseDate,Genre,Price,Rating")] Movie movie)
         {
