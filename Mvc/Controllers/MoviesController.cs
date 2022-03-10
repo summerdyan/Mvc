@@ -21,9 +21,37 @@ namespace Mvc.Controllers
 
         // GET: Movies
         // creates Movie List object and passes it to view
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string movieGenre, string searchString)
         {
-            return View(await _context.Movie.ToListAsync());
+            // use LINQ to get list of genres
+            IQueryable<string> genreQuery = from m in _context.Movie
+                                            orderby m.Genre
+                                            select m.Genre;
+
+            // creates a LINQ query to select the movies
+            var movies = from m in _context.Movie
+                         select m;
+
+            // If the searchString parameter contains a string,
+            // the movies query is modified to filter on the value of the search string
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                movies = movies.Where(s => s.Title.Contains(searchString));
+            }
+
+            if(!string.IsNullOrEmpty(movieGenre))
+            {
+                movies = movies.Where(x => x.Genre == movieGenre);
+            }
+
+            var movieGenreVM = new MovieGenreViewModel
+            {
+                // SelectList is created using distinct genres
+                Genres = new SelectList(await genreQuery.Distinct().ToListAsync()),
+                Movies = await movies.ToListAsync()
+            };
+
+            return View(movieGenreVM);
         }
 
         // GET: Movies/Details/5
