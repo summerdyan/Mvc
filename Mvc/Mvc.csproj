@@ -12,9 +12,11 @@
     <None Remove="Microsoft.EntityFrameworkCore.Design" />
     <None Remove="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" />
     <None Remove="Microsoft.EntityFrameworkCore.Tools" />
+    <None Remove="Models\SchoolViewModels\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\HelloWorld\" />
+    <Folder Include="Models\SchoolViewModels\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.0" />

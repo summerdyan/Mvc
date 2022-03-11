@@ -24,9 +24,64 @@ namespace Mvc.Controllers
         // GET: Students
         // displays all students in the database
         // async, Task<T>, await, and ToListAsync make the code execute asynchronously
-        public async Task<IActionResult> Index()
+        // receives a sortOrder parameter from the query string in the URL
+        // receives searchString value from text box on Index page
+        public async Task<IActionResult> Index(
+            string sortOrder,
+            string searchString,
+            string currentFilter,
+            int? pageNumber)
         {
-            return View(await _context.Students.ToListAsync());
+            // sortOrder will be either a Name or Date (possibly followed by _desc for descending order)
+            // the ViewData names specify the column heading hyperlinks
+            ViewData["CurrentSort"] = sortOrder; // view with current sort order
+            // if sortOrder is null or empty set it to "name_desc"
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
+
+            // if the search string is changed during paging, the page has to be reset to 1
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString; // view with current filter string
+
+            // get the student data
+            var students = from s in _context.Students
+                           select s;
+
+            // select students whose first or last name contains the searchString
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                students = students.Where(s => s.LastName.Contains(searchString)
+                || s.FirstMidName.Contains(searchString));
+            }
+
+            // specifies the order to present the list based on sortOrder
+            switch (sortOrder)
+            {
+                case "name_desc": // student's last name descending
+                    students = students.OrderByDescending(s => s.LastName);
+                    break;
+                case "Date": // date ascending
+                    students = students.OrderBy(s => s.EnrollmentDate);
+                    break;
+                case "date_desc": // date descending
+                    students = students.OrderByDescending(s => s.EnrollmentDate);
+                    break;
+                default: // default order is ascending based on student's last name
+                    students = students.OrderBy(s => s.LastName);
+                    break;
+            }
+
+            int pageSize = 3; // set page size
+            // display sorted students and paging effect to view
+            return View(await PaginatedList<Student>.CreateAsync(students.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: Students/Details/5
