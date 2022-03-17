@@ -26,7 +26,7 @@ namespace Mvc.Models
         [Display(Name = "Hire Date")]           // caption for text box is Hire Date
         public DateTime HireDate { get; set; }  // DateTime property
 
-        [Display(Name="Full Name")]
+        [Display(Name = "Full Name")]
         public string FullName
         {
             get { return LastName + ", " + FirstMidName; }
