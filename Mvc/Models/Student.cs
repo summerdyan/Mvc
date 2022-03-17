@@ -12,7 +12,7 @@ namespace Mvc.Models
 
         [Required]                                      // require last name property
         [StringLength(50)]                              // last name can be up to 50 characters
-        [Display(Name ="Last Name")]                    // caption for text box should be Last Name
+        [Display(Name = "Last Name")]                    // caption for text box should be Last Name
         public string LastName { get; set; }            // student's last name
 
         [Required]                                      // require first name property

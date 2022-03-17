@@ -13,12 +13,14 @@
     <None Remove="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" />
     <None Remove="Microsoft.EntityFrameworkCore.Tools" />
     <None Remove="Models\SchoolViewModels\" />
+    <None Remove="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\HelloWorld\" />
     <Folder Include="Models\SchoolViewModels\" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="5.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.0" />
@@ -31,5 +33,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.0" />
   </ItemGroup>
 </Project>

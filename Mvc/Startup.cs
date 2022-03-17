@@ -31,6 +31,7 @@ namespace Mvc
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddControllersWithViews();
+            services.AddRazorPages();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,6 +52,8 @@ namespace Mvc
 
             app.UseRouting();
 
+            // using authentication and authorization
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -58,6 +61,7 @@ namespace Mvc
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
             });
         }
     }
