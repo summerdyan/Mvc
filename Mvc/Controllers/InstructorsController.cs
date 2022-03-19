@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -82,6 +83,8 @@ namespace Mvc.Controllers
 
         // GET: Instructors/Create
         // create a new instructor
+        // only admin can create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             // create Instructor object
@@ -99,6 +102,8 @@ namespace Mvc.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         // create a new instructor
+        // only admin can create
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("FirstMidName,HireDate,LastName,OfficeAssignment")] Instructor instructor, string[] selectedCourses)
         {
             // add selected courses to instructor's course assignments
@@ -125,6 +130,8 @@ namespace Mvc.Controllers
         }
 
         // GET: Instructors/Edit/5
+        // admin and manager can edit
+        [Authorize(Roles = "Admin, Manager")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -167,6 +174,8 @@ namespace Mvc.Controllers
         // POST: Instructors/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // admin and manager can edit
+        [Authorize(Roles = "Admin, Manager")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int? id, string[] selectedCourses)
@@ -265,6 +274,8 @@ namespace Mvc.Controllers
         }
 
         // GET: Instructors/Delete/5
+        // only admin can delete
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -283,6 +294,8 @@ namespace Mvc.Controllers
         }
 
         // POST: Instructors/Delete/5
+        // only admin can delete
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         // deletes an instructor

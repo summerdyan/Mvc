@@ -8,6 +8,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Mvc.Data;
 using System;
+using Microsoft.Extensions.Configuration;
+using Mvc.Areas.Identity.Data;
+using Microsoft.AspNetCore.Identity;
+using System.Diagnostics;
 
 namespace Mvc
 {
@@ -21,6 +25,21 @@ namespace Mvc
             // create databases if they don't exist
             CreateDbIfNotExists(host);
 
+            using (var scope = host.Services.CreateScope())
+            {
+                var serviceProvider = scope.ServiceProvider;
+                try
+                {
+                    var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+                    var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                    SeedUsersAndRoles.SeedData(userManager, roleManager);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                }
+            }
+
             // run host
             host.Run();
         }
@@ -31,8 +50,10 @@ namespace Mvc
             using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
+
                 try
                 {
+                    // initialize movie and school data
                     var context = services.GetRequiredService<MvcMovieContext>();
                     DbInitializer.Initialize(context);
                 }

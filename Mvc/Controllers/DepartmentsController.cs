@@ -1,3 +1,4 @@
+// controls the Departments page
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Mvc.Data;
 using Mvc.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Mvc.Controllers
 {
@@ -49,6 +51,8 @@ namespace Mvc.Controllers
             return View(department);
         }
 
+        // only admin can create
+        [Authorize(Roles = "Admin")]
         // GET: Departments/Create
         public IActionResult Create()
         {
@@ -59,6 +63,8 @@ namespace Mvc.Controllers
         // POST: Departments/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // only admin can create
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("DepartmentID,Name,Budget,StartDate,InstructorID,ConcurrencyToken")] Department department)
@@ -74,6 +80,8 @@ namespace Mvc.Controllers
         }
 
         // GET: Departments/Edit/5
+        // admin and manager can edit
+        [Authorize(Roles = "Admin, Manager")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -97,19 +105,24 @@ namespace Mvc.Controllers
         // POST: Departments/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // admin and  manager can edit
+        [Authorize(Roles = "Admin, Manager")]
         [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditPost(int? id)
         {
+            // department not found
             if (id == null)
             {
                 return NotFound();
             }
 
+            // get department that will be updated
             var departmentToUpdate = await _context.Departments
                 .Include(i => i.Administrator)
                 .FirstOrDefaultAsync(m => m.DepartmentID == id);
 
+            // don't allow changes to department that was deleted
             if (departmentToUpdate == null)
             {
                 Department deletedDepartment = new Department();
@@ -120,8 +133,10 @@ namespace Mvc.Controllers
                 return View(deletedDepartment);
             }
 
+            // create concurrency token for handling concurrency issues
             departmentToUpdate.ConcurrencyToken = Guid.NewGuid();
 
+            // get concurrency token of department to update
             _context.Entry(departmentToUpdate).Property(d => d.ConcurrencyToken)
                                    .OriginalValue = Department.ConcurrencyToken;
 
@@ -135,17 +150,20 @@ namespace Mvc.Controllers
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
+                // catch concurrency issues
                 catch (DbUpdateConcurrencyException ex)
                 {
                     var exceptionEntry = ex.Entries.Single();
                     var clientValues = (Department)exceptionEntry.Entity;
                     var databaseEntry = exceptionEntry.GetDatabaseValues();
+
+                    // don't save changes to department that was deleted
                     if (databaseEntry == null)
                     {
                         ModelState.AddModelError(string.Empty,
                             "Unable to save changes. The department was deleted by another user.");
-                        //return View();
                     }
+                    // catch concurrency issues with differing data values
                     else
                     {
                         var databaseValues = (Department)databaseEntry.ToObject();
@@ -182,10 +200,13 @@ namespace Mvc.Controllers
                     }
                 }
             }
+            // display department
             ViewData["InstructorID"] = new SelectList(_context.Instructors, "ID", "FullName", departmentToUpdate.InstructorID);
             return View(departmentToUpdate);
         }
 
+        // only admin can delete
+        [Authorize(Roles = "Admin")]
         // GET: Departments/Delete/5
         public async Task<IActionResult> Delete(int? id, bool? concurrencyError)
         {
@@ -206,6 +227,7 @@ namespace Mvc.Controllers
                 }
             }
 
+            // display error if attempted deletion was on modified record
             if (concurrencyError.GetValueOrDefault())
             {
                 ViewData["ConcurrencyErrorMessage"] = "The record you attempted to delete "
@@ -219,6 +241,8 @@ namespace Mvc.Controllers
             return View(department);
         }
 
+        // only admin can delete
+        [Authorize(Roles = "Admin")]
         // POST: Departments/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
