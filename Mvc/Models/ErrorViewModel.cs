@@ -1,4 +1,5 @@
-﻿using System;
+﻿// keeping track of RequestId errors
+using System;
 
 namespace Mvc.Models
 {

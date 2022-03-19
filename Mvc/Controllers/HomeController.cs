@@ -1,4 +1,5 @@
-﻿using System;
+﻿// controls the home page
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -9,9 +10,12 @@ using Mvc.Models;
 using Microsoft.EntityFrameworkCore;
 using Mvc.Data;
 using Mvc.Models.SchoolViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Mvc.Controllers
 {
+    // allow anonymous users to access home
+    [AllowAnonymous]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

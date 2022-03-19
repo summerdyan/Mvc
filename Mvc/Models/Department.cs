@@ -3,9 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Mvc.Models
 {
+
+    [Authorize(Roles = "Admin")]
     public class Department
     {
         public int DepartmentID { get; set; }   // ID associated with department

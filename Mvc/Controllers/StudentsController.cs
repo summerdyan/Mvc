@@ -1,8 +1,9 @@
-// controls the aspects of the Student tab of the web app
+// controls the aspects of the Student page of the web app
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -116,6 +117,8 @@ namespace Mvc.Controllers
 
         // GET: Students/Create
         // displays view so that user can choose to create
+        // only admin can create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -127,6 +130,8 @@ namespace Mvc.Controllers
 
         // adds the Student entity created by the ASP.NET Core MVC model binder to the
         // Students entity set and then saves the changes to the database
+        // only admin can create
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken] // helps prevent cross-site request forgery
         public async Task<IActionResult> Create([Bind("ID,LastName,FirstMidName,EnrollmentDate")] Student student)
@@ -152,6 +157,8 @@ namespace Mvc.Controllers
         }
 
         // GET: Students/Edit/5
+        // admin and manager can edit
+        [Authorize(Roles = "Admin, Manager")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -171,6 +178,8 @@ namespace Mvc.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         // allows user to update certain attributes about the Student
+        // admin and manager can edit
+        [Authorize(Roles = "Admin, Manager")]
         [HttpPost, ActionName("Edit")] // uses action method to connect to Edit method
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditPost(int? id)
@@ -210,6 +219,8 @@ namespace Mvc.Controllers
         // displays view so that user can choose to delete
         // manages error reporting
         // accepts an optional parameter that indicates whether the method was called after a failure to save changes
+        // only admin can delete
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id, bool? saveChangesError = false)
         {
             if (id == null)
@@ -237,6 +248,8 @@ namespace Mvc.Controllers
 
         // POST: Students/Delete/5
         // deletes selected entity
+        // only admin can delete
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
