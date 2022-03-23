@@ -31,13 +31,15 @@ namespace Mvc
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<MvcMovieContext>();
+
             services.AddDbContext<MvcMovieContext>(options =>
                     options.UseSqlite(Configuration.GetConnectionString("MvcMovieContext")));
 
             services.AddIdentity<IdentityUser, IdentityRole>()
                 // services.AddDefaultIdentity<IdentityUser>()
                 .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<MvcIdentityDbContext>()
+                .AddEntityFrameworkStores<MvcMovieContext>()
                 .AddDefaultTokenProviders();
 
             services.AddMvc()
@@ -55,12 +57,6 @@ namespace Mvc
             });
 
             services.AddSingleton<IEmailSender, EmailSender>();
-
-            #region Authorization
-
-            AddAuthorizationPolicies(services);
-
-            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -94,15 +90,6 @@ namespace Mvc
                 endpoints.MapRazorPages();
             });
 
-        }
-
-        // add policy
-        void AddAuthorizationPolicies(IServiceCollection services)
-        {
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("EmployeeOnly", policy => policy.RequireClaim("EmployeeNumber"));
-            });
         }
 
     }
