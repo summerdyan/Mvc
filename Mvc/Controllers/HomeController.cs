@@ -41,6 +41,28 @@ namespace Mvc.Controllers
                     EnrollmentDate = dateGroup.Key,
                     StudentCount = dateGroup.Count()
                 };
+
+            // display to view
+            return View(await data.AsNoTracking().ToListAsync());
+        }
+
+        // The LINQ statement groups the enrollment entities by courses,
+        // calculates the number of entities in each group,
+        // and stores the results in a collection of CourseGroup view model objects
+
+        // since enrollment entities correspond to students enrolled, we can get the
+        // number of students enrolled in a particular course by counting the enrollments per course
+        public async Task<ActionResult> Statistics()
+        {
+            IQueryable<CourseGroup> data =
+                from enrollment in _context.Enrollments
+                group enrollment by enrollment.Course.Title into courseGroup
+                select new CourseGroup()
+                {
+                    CourseTitle = courseGroup.Key,
+                    StudentCount = courseGroup.Count()
+                };
+
             // display to view
             return View(await data.AsNoTracking().ToListAsync());
         }
