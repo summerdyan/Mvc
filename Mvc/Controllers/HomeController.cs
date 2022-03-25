@@ -67,6 +67,12 @@ namespace Mvc.Controllers
             return View(await data.AsNoTracking().ToListAsync());
         }
 
+        // for the course registration page
+        public IActionResult CourseRegistration()
+        {
+            return View();
+        }
+
         public IActionResult Index()
         {
             return View();

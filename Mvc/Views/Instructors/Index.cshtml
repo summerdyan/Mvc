@@ -1,0 +1,139 @@
+@*Displays the Instructor page*@
+@model Mvc.Models.SchoolViewModels.InstructorIndexData
+
+@{ ViewData["Title"] = "Instructors"; }
+
+<h1>Instructors</h1>
+
+<p>
+    @*Create button*@
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            @*Column headers*@
+            <th>
+                Last Name
+            </th>
+            <th>
+                First Name
+            </th>
+            <th>
+                Hire Date
+            </th>
+            <th>
+                Office
+            </th>
+            <th>
+                Courses
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @*Display columns with Index, Edit, Details, Delete*@
+        @foreach (var item in Model.Instructors)
+        {
+            string selectedRow = "";
+            if (item.ID == (int?)ViewData["InstructorID"])
+            {
+                selectedRow = "table-success";
+            }
+        <tr class="@selectedRow">
+            <td>
+                @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstMidName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.HireDate)
+            </td>
+            <td>
+                @*displays office location if office assignment is not null*@
+                @if (item.OfficeAssignment != null)
+                {
+                    @item.OfficeAssignment.Location
+                }
+            </td>
+            <td>
+                @foreach (var course in item.CourseAssignments)
+                {
+                    @course.Course.CourseID @(" ") @course.Course.Title <br />
+                }
+            </td>
+            <td>
+                @*causes the selected instructor's ID to be sent to the Index method*@
+                <a asp-action="Index" asp-route-id="@item.ID">Select</a> |
+
+                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+@*Displays a list of courses related to an instructor when they're selected*@
+@if (Model.Courses != null)
+            {
+                <h3>Courses Taught by Selected Instructor</h3>
+                <table class="table">
+                    <tr>
+                        <th></th>
+                        <th>Number</th>
+                        <th>Title</th>
+                        <th>Department</th>
+                    </tr>
+
+                    @foreach (var item in Model.Courses)
+                    {
+                        string selectedRow = "";
+                        if (item.CourseID == (int?)ViewData["CourseID"])
+                        {
+                            selectedRow = "success";
+                        }
+                        <tr class="@selectedRow">
+                            <td>
+                                @Html.ActionLink("Select", "Index", new { courseID = item.CourseID })
+                            </td>
+                            <td>
+                                @item.CourseID
+                            </td>
+                            <td>
+                                @item.Title
+                            </td>
+                            <td>
+                                @item.Department.Name
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+
+@*Displays the list of students enrolled in a course if that course is selected*@
+@if (Model.Enrollments != null)
+            {
+                <h3>
+                    Students Enrolled in Selected Course
+                </h3>
+                <table class="table">
+                    <tr>
+                        <th>Name</th>
+                        <th>Grade</th>
+                    </tr>
+                    @foreach (var item in Model.Enrollments)
+                {
+                    <tr>
+                        <td>
+                            @item.Student.FullName
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Grade)
+                        </td>
+                    </tr>
+                }
+                </table>
+            }
